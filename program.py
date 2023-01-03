@@ -36,7 +36,7 @@ def circleDraw():
     return abs, ord
 
 
-file = open("C:\\Users\\nlouviaux\\Desktop\\Test\\neuralTework.txt", "r")
+file = open("C:\\Users\\Salocin\\Desktop\\Test\\neuralTework.txt", "r")
 lines = file.readlines()
 generations = []
 means = []
