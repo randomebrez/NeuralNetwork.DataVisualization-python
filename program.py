@@ -35,26 +35,40 @@ def circleDraw():
         ord.append(np.sin(t))
     return abs, ord
 
-
+outputDescriptions = {
+    -1: "Random",
+    0: "Right",
+    1: "Left",
+    2: "Up",
+    3: "Down",
+    4: "UpRight",
+    5: "UpLeft",
+    6: "DownLeft",
+    7: "DownRight",
+    8: "Stay"
+}
 file = open("C:\\Users\\nlouviaux\\Desktop\\Test\\neuralTework.txt", "r")
 lines = file.readlines()
 generations = []
 means = []
-maxValue = []
-zeroValue = []
-deuxValue = []
-quatreValue = []
-sixValue = []
-for i in range(len(lines)):
+outputLists = []
+totalChoice = int(lines[0])
+for i in range(1, len(lines)):
     splittedLine = lines[i].split(';')
     generations.append(float(splittedLine[0]))
     means.append(float(splittedLine[1]))
-    total = float(splittedLine[2]) + float(splittedLine[3]) + float(splittedLine[4]) + float(splittedLine[5]) + float(splittedLine[6])
-    maxValue.append(100 * float(splittedLine[2]) / total)
-    zeroValue.append(100 * float(splittedLine[3]) / total)
-    deuxValue.append(100 * float(splittedLine[4]) / total)
-    quatreValue.append(100 * float(splittedLine[5]) / total)
-    sixValue.append(100 * float(splittedLine[6]) / total)
+    for j in range(2, len(splittedLine)):
+        if i == 1:
+            outputLists.append([100 * float(splittedLine[j]) / totalChoice])
+        else:
+            outputLists[j-2].append(100 * float(splittedLine[j]) / totalChoice)
+
+file.close()
+
+outputMeans = []
+for i in range(len(outputLists)):
+    outputMeans.append(sum(outputLists[i])/float(len(outputLists[i])))
+bigBossMean = sum(outputMeans)/len(outputLists)
 
 plt.subplot(2, 1, 1)
 plt.plot(generations, means, 'b.')
@@ -62,47 +76,12 @@ plt.axis([0, len(generations), 0, 100])
 # plt.axis([-50, 50, -50, 50])
 
 plt.subplot(2, 1, 2)
-plt.plot(generations, zeroValue, 'r.')
-plt.plot(generations,maxValue, 'g.')
-plt.plot(generations, deuxValue, 'b.')
-plt.plot(generations, quatreValue, 'y.')
-plt.plot(generations, sixValue, 'k.')
+for i in range(len(outputLists)):
+    label = outputDescriptions[i - 1]
+    if outputMeans[i] > bigBossMean:
+        label = label.upper()
+    plt.plot(generations, outputLists[i], '.', label=label)
+plt.legend()
 plt.axis([0, len(generations), -1, 110])
 
 plt.show()
-
-# width = 1.
-# side = 2.
-# rectPoints = [[0, 0, width, width, 0], [0, side, side, 0, 0]]
-#
-# xP = side * np.cos(2*np.pi/5)
-# yP = side * np.sin(2*np.pi/5)
-# pentaPoints = [[0, side, side + xP, side/2, - xP, 0],
-#                [0, 0, yP, yP + side*np.cos(3*np.pi/10), yP, 0]]
-#
-#
-# x = side * np.cos(np.pi/3)
-# y = side * np.sin(np.pi/3)
-#
-# hexaPoints = [[0, side, side + x, side, 0, -x, 0],
-#               [0, 0, y, 2 * y, 2 * y, y,0]]
-#
-# circlePoints = populate()
-#
-# print(np.linspace(-1,1,100))
-#
-# circleRopesX = [[1,-1],[0.5,-0.5],[-0.5,0.5]]
-# circleRopesY = [[0,0],[np.sqrt(1-0.5**2), - np.sqrt(1-0.5**2)],[np.sqrt(1-0.5**2), - np.sqrt(1-0.5**2)]]
-# circlePoints = circleDraw()
-#
-# plt.plot(circlePoints[0],circlePoints[1],"k-")
-# for i in range(len(circleRopesX)):
-#     plt.plot(circleRopesX[i], circleRopesY[i], "k-" )
-# #plt.plot(rectPoints[0], rectPoints[1], "k-")
-# #plt.plot(pentaPoints[0], translateY(pentaPoints[1], side + 1),"k-")
-# #plt.plot(translateX(hexaPoints[0],width + 2), hexaPoints[1],"k-")
-# #plt.plot(circlePoints[0], circlePoints[1], "x")
-# plt.axis("equal")
-# plt.axis("off")
-#
-# plt.show()
