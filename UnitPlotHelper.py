@@ -1,6 +1,7 @@
 import numpy as np
 import functools
 import SqliteGateway
+import Garbage
 
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
@@ -15,13 +16,14 @@ def format_unit_steps(unitSteps):
         yPos.append(float(position[1].replace(',', '.')))
     return xPos, yPos
 
-def animate(i, figure, axis, unitPositions, unitDrawColors, lifeTime):
+def animate(i, figure, axis, unitPositions, unitDrawColors, lifeTime, xYelectionZone, ySelectionZone):
     axis.clear()
     if i == lifeTime - 1:
         plt.close(figure)
         return
 
     plt.title("Step {0}".format(i))
+    plt.plot(xYelectionZone, ySelectionZone, 'r-')
     # Get the point from the points list at index i
     for key in unitPositions.keys():
         position = unitPositions[key]
@@ -48,7 +50,8 @@ def draw(simulationIndex, generationId, lifeTime):
         positions[unitId] = format_unit_steps(unitSteps[unitId])
 
     colors = get_colors(unitSteps.keys())
-    anim = FuncAnimation(fig, functools.partial(animate, figure=fig, axis=ax, unitPositions=positions, unitDrawColors=colors, lifeTime=lifeTime), frames=lifeTime, interval=1, repeat=False)
+    xCircle, yCircle = Garbage.circle_draw(0.2*50)
+    anim = FuncAnimation(fig, functools.partial(animate, figure=fig, axis=ax, unitPositions=positions, unitDrawColors=colors, lifeTime=lifeTime, xYelectionZone=xCircle, ySelectionZone=yCircle), frames=lifeTime, interval=1, repeat=False)
 
     plt.suptitle("Simulation {0} | Generation {1}".format(simulationIndex, generationId))
     plt.show()

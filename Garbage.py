@@ -24,13 +24,13 @@ def populate():
     return xPos, yPos
 
 
-def circleDraw():
+def circle_draw(radius):
     theta = np.linspace(0, 2 * np.pi, 1000)
     ord = []
     abs = []
     for t in theta:
-        abs.append(np.cos(t))
-        ord.append(np.sin(t))
+        abs.append(radius * np.cos(t))
+        ord.append(radius * np.sin(t))
     return abs, ord
 
 # file = open("C:\\Users\\Salocin\\Desktop\\Test\\neuralTework.txt", "r")
