@@ -4,8 +4,9 @@ import UnitPlotHelper
 ### Program ###
 
 lifeTime = 150
-startingGeneration = 60
-dbFilePath = r"D:\Codes\Test\NeuralNetworkDatabase.txt"
+startingGeneration = 19
+#dbFilePath = r"D:\Codes\Test\NeuralNetworkDatabase.txt"
+dbFilePath = r"C:\Users\nico-\Documents\Codes\Tests\NeuralNetworkDatabase.txt"
 
 # Create connection to DB
 SqliteGateway.create_connection(dbFilePath)
