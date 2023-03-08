@@ -67,11 +67,9 @@ def get_unit_steps_for_generation(simulationIndex, generationId):
         sqlRequest += "{0},".format(unitId[0])
 
     sqlRequest = sqlRequest[:-1]
-    cursor.execute("select * from unit_steps where unit_id in ({0})".format(sqlRequest))
+    cursor.execute("select * from unit_steps where unit_id in ({0}) order by life_step_id".format(sqlRequest))
     steps = cursor.fetchall()
     for step in steps:
-        if (len(step) <= 1):
-            print(step)
         result[step[1]].append(step)
     return result
 
