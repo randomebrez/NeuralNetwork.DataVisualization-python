@@ -2,23 +2,33 @@ import math
 
 import numpy as np
 import functools
-import Garbage
+import Helper
 
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 from matplotlib.animation import FuncAnimation
 
-def format_unit_steps(unitSteps):
-    xPos = []
-    yPos = []
-    for step in unitSteps:
-        positions = step[3].split("!")
-        for position in positions[:-1]:
-            coordinates = position.split(":")
-            xPos.append(float(coordinates[0].replace(',', '.')))
-            yPos.append(float(coordinates[1].replace(',', '.')))
-    return xPos, yPos
+# fct that draw the animation for one generation
+# called externally
+def draw(simulationIndex, generationId, unitSteps, environmentLimits, selection_shape, selection_constraints, lifeTime):
+    fig, ax = plt.subplots(1, 1)
+    fig.set_size_inches(5, 5)
 
+    positions = {}
+    colors = get_colors(unitSteps.keys())
+    for unitId in unitSteps.keys():
+        positions[unitId] = Helper.format_unit_steps(unitSteps[unitId])
+
+    selectionZone = Helper.get_selection_shape(selection_shape, selection_constraints)
+    environmentZone = Helper.rectangle_draw(environmentLimits[0][0], environmentLimits[0][1], environmentLimits[1][0], environmentLimits[1][1])
+    plotAxisLimits = [[1.1 * environmentLimits[0][0], 1.1 * environmentLimits[0][1]], [1.1 * environmentLimits[1][0], 1.1 * environmentLimits[1][1]]]
+
+    anim = FuncAnimation(fig, functools.partial(animate, figure=fig, axis=ax, unitPositions=positions, unitDrawColors=colors, lifeTime=lifeTime, environmentLimits=plotAxisLimits, environmentZone=environmentZone, selectionZone=selectionZone), frames=lifeTime, interval=1, repeat=False, cache_frame_data=False)
+
+    plt.suptitle("Simulation {0} | Generation {1}".format(simulationIndex, generationId))
+    plt.show()
+
+# fct given as argument for FuncAnimation method in 'draw'
 def animate(i, figure, axis, unitPositions, unitDrawColors, lifeTime, environmentLimits, environmentZone, selectionZone):
     axis.clear()
     if i == lifeTime - 1:
@@ -37,6 +47,8 @@ def animate(i, figure, axis, unitPositions, unitDrawColors, lifeTime, environmen
     axis.set_xlim(environmentLimits[0])
     axis.set_ylim(environmentLimits[1])
 
+
+# tools
 def get_colors(unitIds):
     result = {}
     colors = iter(cm.rainbow(np.linspace(0, 1, len(unitIds))))
@@ -44,44 +56,9 @@ def get_colors(unitIds):
         result[id] = next(colors)
     return result
 
-def draw(simulationIndex, generationId, unitSteps, environmentLimits, selection_shape, selection_constraints, lifeTime):
-    fig, ax = plt.subplots(1, 1)
-    fig.set_size_inches(5, 5)
 
-    positions = {}
-    for unitId in unitSteps.keys():
-        positions[unitId] = format_unit_steps(unitSteps[unitId])
 
-    colors = get_colors(unitSteps.keys())
-    selectionZone = get_selection_shape(selection_shape, selection_constraints)
-    environmentZone = Garbage.rectangle_draw(environmentLimits[0][0], environmentLimits[0][1], environmentLimits[1][0], environmentLimits[1][1])
-    plotAxisLimits = [[1.1 * environmentLimits[0][0], 1.1 * environmentLimits[0][1]], [1.1 * environmentLimits[1][0], 1.1 * environmentLimits[1][1]]]
-    anim = FuncAnimation(fig, functools.partial(animate, figure=fig, axis=ax, unitPositions=positions, unitDrawColors=colors, lifeTime=lifeTime, environmentLimits=plotAxisLimits, environmentZone=environmentZone, selectionZone=selectionZone), frames=lifeTime, interval=1, repeat=False, cache_frame_data=False)
-
-    plt.suptitle("Simulation {0} | Generation {1}".format(simulationIndex, generationId))
-    plt.show()
-
-def get_selection_shape(shape_enum, constraints):
-
-    abs, ord = [], []
-    splitConstraints = constraints.split(':')
-    if (shape_enum == "Circular"):
-        abs, ord = Garbage.circle_draw([float(splitConstraints[0].replace(',', '.')), float(splitConstraints[1].replace(',', '.'))], float(splitConstraints[2].replace(',', '.')))
-    elif(shape_enum == "Rectangle"):
-        abs, ord = Garbage.rectangle_draw(float(splitConstraints[0].replace(',', '.')), float(splitConstraints[1].replace(',', '.')), float(splitConstraints[2].replace(',', '.')), float(splitConstraints[3].replace(',', '.')))
-
-    return abs, ord
-
-def DrawBrain(neuronCoordinates, edges):
-    fig, ax = plt.subplots(1, 1)
-    for i in range(len(neuronCoordinates)):
-        xCircle, yCircle = Garbage.circle_draw([neuronCoordinates[0], neuronCoordinates[1]], 0.2)
-        plt.plot(xCircle, yCircle, 'b-')
-    for i in range(len(edges)):
-        edge = edges[i]
-        plt.plot(edge[0], edge[1], edge[2])
-    return fig, ax
-
+# Function plot
 def PlotTanh(modifier):
     alpha = (0.5 / modifier) * (math.log(1.9) - math.log(0.1))
     x = np.arange(-1.5 * modifier, 1.5 * modifier, 0.1)
@@ -119,3 +96,15 @@ def PlotSigmoid(modifier):
     plt.plot(x, y_mod, 'b-')
     plt.plot(x, y_mod2, 'g-')
     plt.show()
+
+
+# WIP
+def DrawBrain(neuronCoordinates, edges):
+    fig, ax = plt.subplots(1, 1)
+    for i in range(len(neuronCoordinates)):
+        xCircle, yCircle = Garbage.circle_draw([neuronCoordinates[0], neuronCoordinates[1]], 0.2)
+        plt.plot(xCircle, yCircle, 'b-')
+    for i in range(len(edges)):
+        edge = edges[i]
+        plt.plot(edge[0], edge[1], edge[2])
+    return fig, ax
