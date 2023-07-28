@@ -59,15 +59,15 @@ def get_unit_steps_for_generation(simulationIndex, generationId):
 
     result = {}
     cursor = dbConnection.cursor()
-    cursor.execute("select distinct unit_id from units where generation_id = {0} and simulation_id = {1}".format(generationId, simulationIndex))
+    cursor.execute("select distinct unit_identifier from units where generation_id = {0} and simulation_id = {1}".format(generationId, simulationIndex))
     unitIds = cursor.fetchall()
     sqlRequest = ""
     for unitId in unitIds:
         result[unitId[0]] = []
-        sqlRequest += "{0},".format(unitId[0])
+        sqlRequest += "'{0}',".format(unitId[0])
 
     sqlRequest = sqlRequest[:-1]
-    cursor.execute("select * from unit_steps where unit_id in ({0}) order by life_step_id".format(sqlRequest))
+    cursor.execute("select * from unit_steps where unit_identifier in ({0})".format(sqlRequest))#order by life_steps
     steps = cursor.fetchall()
     for step in steps:
         result[step[1]].append(step)
@@ -89,7 +89,7 @@ def get_last_simulation():
         return
 
     cursor = dbConnection.cursor()
-    cursor.execute("select simulation_id from simulations order by simulation_id desc limit 1")
+    cursor.execute("select * from simulations order by simulation_id desc limit 1")
     row = cursor.fetchall()
 
-    return row[0][0]
+    return row[0]
