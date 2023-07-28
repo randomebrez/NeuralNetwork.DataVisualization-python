@@ -29,8 +29,12 @@ def DrawSmallLife(startingGenerationId, dbFilePath):
 
 # tools
 def get_environment_limits(simulation):
+    result = []
     limits = simulation[1].split(':')
-    return [[float(limits[0].replace(',', '.')), float(limits[1].replace(',', '.'))], [float(limits[2].replace(',', '.')), float(limits[3].replace(',', '.'))]]
+    scope = int((len(limits) - 1)/2)
+    for i in range(scope):
+        result.append([float(limits[2 * i].replace(',', '.')), float(limits[2 * i + 1].replace(',', '.'))])
+    return result
 
 # WIP
 def DrawBrain():
