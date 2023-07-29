@@ -46,10 +46,18 @@ def get_generation_ids_for_simulation(simulationIndex):
     cursor.execute("select distinct generation_id from units where simulation_id = {0}".format(simulationIndex))
     genrationIds = cursor.fetchall()
 
-    for genrationId in genrationIds:
-        result.append(genrationId[0])
+    for generationId in genrationIds:
+        result.append(generationId[0])
 
     return result
+
+def get_generation_results(simulationIndex):
+    if not is_initialized():
+        return
+
+    cursor = dbConnection.cursor()
+    cursor.execute("select * from generation_results where simulation_id = {0}".format(simulationIndex))
+    return cursor.fetchall()
 
 def get_unit_steps_for_generation(simulationIndex, generationId):
     if not is_initialized():

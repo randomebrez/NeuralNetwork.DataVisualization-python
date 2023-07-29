@@ -28,6 +28,21 @@ def draw(simulationIndex, generationId, unitSteps, environmentLimits, selection_
     plt.suptitle("Simulation {0} | Generation {1}".format(simulationIndex, generationId))
     plt.show()
 
+def generation_results_draw(generations, meanScores, survivorNumbers):
+    colors = iter(cm.rainbow(np.linspace(0, 1, len(generations))))
+    fig, axis = plt.subplots(2,1)
+    for i in range(len(generations)):
+        color = next(colors)
+        axis[0].plot(generations[i], meanScores[i], color)
+        axis[0].set_title("Mean score")
+        axis[1].plot(generations[i], survivorNumbers[i], color)
+        axis[1].set_title("Survivor number")
+
+    for ax in axis.flat:
+        ax.label_outer()
+
+    plt.show()
+
 # fct given as argument for FuncAnimation method in 'draw'
 def animate(i, figure, axis, unitPositions, unitDrawColors, lifeTime, environmentLimits, environmentZone, selectionZone):
     axis.clear()
@@ -59,6 +74,14 @@ def get_colors(unitIds):
 
 
 # Function plot
+def curve_draw(list_x, list_y):
+    colors = iter(cm.rainbow(np.linspace(0, 1, len(list_x))))
+    for i in range (len(list_x)):
+        x = list_x[i]
+        y = list_y[i]
+        plt.plot(x, y, next(colors))
+    plt.show()
+
 def PlotTanh(modifier):
     alpha = (0.5 / modifier) * (math.log(1.9) - math.log(0.1))
     x = np.arange(-1.5 * modifier, 1.5 * modifier, 0.1)
