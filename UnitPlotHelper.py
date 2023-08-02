@@ -29,18 +29,20 @@ def draw(simulationIndex, generationId, unitSteps, environmentLimits, selection_
     plt.show()
 
 def generation_results_draw(generations, meanScores, survivorNumbers):
+    p = len(generations)
     colors = iter(cm.rainbow(np.linspace(0, 1, len(generations))))
     fig, axis = plt.subplots(2,1)
     for i in range(len(generations)):
         color = next(colors)
-        axis[0].plot(generations[i], meanScores[i], color)
+        axis[0].plot(generations[i], meanScores[i], color=color)
         axis[0].set_title("Mean score")
-        axis[1].plot(generations[i], survivorNumbers[i], color)
+        axis[1].plot(generations[i], survivorNumbers[i], color=color)
         axis[1].set_title("Survivor number")
 
     for ax in axis.flat:
         ax.label_outer()
 
+    fig.canvas.manager.full_screen_toggle()
     plt.show()
 
 # fct given as argument for FuncAnimation method in 'draw'
