@@ -27,12 +27,16 @@ def create_connection(db_file):
         print(e)
 
 # Methods
-def get_last_simulation():
+def get_simulation_default_last(simulationId = 0):
     if not is_initialized():
         return
 
+    string = "select * from simulations order by simulation_id desc limit 1"
+    if simulationId != 0:
+        string = "select * from simulations where simulation_id = {0}".format(simulationId)
+
     cursor = dbConnection.cursor()
-    cursor.execute("select * from simulations order by simulation_id desc limit 1")
+    cursor.execute(string)
     row = cursor.fetchall()
 
     return row[0]
